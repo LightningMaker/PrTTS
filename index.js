@@ -50,13 +50,14 @@ function run(){
 			const text = req.body.text;
 			const folderPath = req.body.folderPath;
 			const trackSelect = req.body.trackSelect;
+			const voiceSelect = req.body.voiceSelect;
 	
 			console.log("Parameters:", { text, folderPath, trackSelect });
 	
 			const params = {
 				token: 'ttsmaker_demo_token',
 				text: text,
-				voice_id: 1504,
+				voice_id: voiceSelect,
 				audio_format: 'mp3',
 				audio_speed: 1.0,
 				audio_volume: 0,
