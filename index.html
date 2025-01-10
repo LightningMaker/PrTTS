@@ -45,26 +45,30 @@
 
 <body>
     <div class="container">
+		<!--第一行菜单-->
 		<div class="top-bar">
 			<!--<button style="float: right;" class="controlBg textStyle inline" onclick="history.go(0)">刷新面板</button>
 			<button class="controlBg textStyle" onclick="importTest()">导入测试</button>-->
 			<button class="controlBg textStyle inline" onclick="ClearText()">清空文字</button>
 			<!--select ，用于选择音轨-->
 			<label for="trackSelect" class="textStyle inline">选择音轨:</label>
-			<select id="trackSelect" class="controlBg textStyle inline">
+			<select id="trackSelect" class="trackSelect controlBg textStyle inline">
 				<option value="0">A1</option>
 				<option value="1">A2</option>
 				<option value="2">A3</option>
 			</select>
-			<label for="voiceSelect" class="textStyle inline">选择声音:</label>
-			<select id="voiceSelect" class="controlBg textStyle inline" style="width: 140px;">
-				<option value="1504">加载中...</option>
-			</select>
+			
 
-			<button style="float: right;" class="controlBg textStyle inline" onclick="OpenWebDebugging()">Web调试</button>
-
+			<button class="controlBg textStyle inline debug-button" onclick="OpenWebDebugging()">Web调试</button>
 		</div>
 
+		<!--第二行菜单-->
+		<div class="top-bar">
+			<label for="voiceSelect" class="textStyle inline">选择声音:</label>
+			<select id="voiceSelect" class="trackSelect controlBg textStyle inline" style="width: 140px;">
+				<option value="1504">加载中...</option>
+			</select>
+		</div>
 		
         <textarea id="inputText" class="text-area" placeholder="输入文字..."></textarea>
         <button id="testApiButton" class="confirm-button">合成音频</button>
@@ -107,7 +111,14 @@
                         option.value = voice.id;
                         option.text = voice.name;
                         voiceSelect.appendChild(option);
+
                     });
+
+					//如果有1504的声音，设置默认值为1504
+					var voiceSelect = document.getElementById("voiceSelect");
+					if (voiceSelect.querySelector("option[value='1504']")) {
+						voiceSelect.value = "1504";
+					}
                 } else {
                     console.error("Failed to load voices:", data.error_details);
                 }
@@ -122,6 +133,10 @@
 		window.onload = function() {
 			onLoaded();
 			loadVoices();
+
+			// 设置trackSelect的默认值为1
+			var trackSelect = document.getElementById("trackSelect");
+        	trackSelect.value = "1";
 		};
 
 

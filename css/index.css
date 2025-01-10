@@ -15,28 +15,58 @@ html, body {
 	overflow: hidden;
 }
 
+
+/* 顶部栏样式 */
 .top-bar {
 	width: 100%;
 	height: 30px;
 	top: 0px;
 	line-height: 25px;
     vertical-align: middle;
+	padding-left: 10px;
+	padding-right: 10px;
+	box-sizing: border-box;
 }
 
+
+/* 按钮和下拉框样式 */
+.debug-button {
+    position: absolute;
+    top: 2px;
+    right: 10px;
+}
+
+.trackSelect{
+	height: 25px;
+	border-width: 2px;
+}
+
+option{
+	background-color: #282828;
+    -webkit-appearance: none!important; /* 移除默认的样式 */
+    -moz-appearance: none!important; /* 移除默认的样式 */
+    appearance: none!important; /* 移除默认的样式 */
+	border-radius: 0!important; /* 将边框半径设置为0，确保边框为直角 */
+	border: 1px solid black!important;
+}
+
+/* 文本区域样式 */
 .text-area {
 	width: 100%;
-	height: calc(100% - 80px); /* 自动计算剩余空间，高度不超过面板高度减去顶部和底部按钮的空间 */
+	height: calc(100% - 115px); /* 自动计算剩余空间，高度不超过面板高度减去顶部和底部按钮的空间 */
 	padding: 10px;
 	font-size: 16px;
 	border: 1px solid #ccc;
 	box-sizing: border-box;
 	resize: none; /* 禁止手动调整大小 */
-	overflow: hidden; /* 禁用滚动条 */
 	position: absolute;
-	top: 30px; /* 从顶部开始 */
+	top: 60px; /* 从顶部开始 */
 	bottom: 50px; /* 留出底部空间给按钮 */
 	white-space: pre-wrap; /* 自动换行 */
 	word-wrap: break-word; /* 确保长单词或 URL 换行 */
+	overflow-y: auto;
+
+	margin-top: 5px;
 }
 
 .confirm-button {
@@ -51,12 +81,17 @@ html, body {
 	box-sizing: border-box;
 	position: absolute;
 	bottom: 0;
+
+
+
 }
 
 .confirm-button:hover {
 	background-color: #0056b3;
 }
 
+
+/* 杂项 */
 a {
 	color: white;
 	margin-left: 10px;
@@ -72,17 +107,8 @@ a {
 	color: #ffffff;
 }
 
-option{
-	background-color: #282828;
-    -webkit-appearance: none!important; /* 移除默认的样式 */
-    -moz-appearance: none!important; /* 移除默认的样式 */
-    appearance: none!important; /* 移除默认的样式 */
-	border-radius: 0!important; /* 将边框半径设置为0，确保边框为直角 */
-	border: 1px solid black!important;
-}
 
-
-
+/* 提示框样式 */
 .alertBox {
     display: none; /* 默认隐藏 */
     position: fixed; /* 固定定位 */
@@ -103,12 +129,7 @@ option{
     margin: 0;
 }
 
-.alertTitle {
-    font-size: 18px;
-    font-weight: bold;
-    margin-bottom: 10px;
-}
-
 .alertText {
     font-size: 14px;
+	word-wrap: break-word; /* 确保长单词或 URL 换行 */
 }
