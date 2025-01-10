@@ -78,16 +78,6 @@
 	</div>
 	<script>
 		var csInterface = new CSInterface();
-		var folderPath = ""
-		csInterface.evalScript('$._ext.getProjectPath()', function(result) {
-			console.log("projPath:" + result);
-			let projPath = result;
-			// 提取文件夹路径
-			folderPath = projPath.substring(0, projPath.lastIndexOf("\\"));
-			console.log("folderPath: " + folderPath);
-		});
-		//console.log(path);
-
 
 		// 获取voice列表并填充到select元素中
 		function loadVoices() {
@@ -142,15 +132,16 @@
 			let text = textarea.value;
 			let trackSelect = document.getElementById('trackSelect').value;
 			let voiceSelect = document.getElementById('voiceSelect').value;
-			downloadAudio(text, folderPath, trackSelect, voiceSelect);     
+			
+			downloadAudio(text, trackSelect, voiceSelect);     
 			
         });
 
-		async function downloadAudio(text, folderPath, trackSelect, voiceSelect) {
+		async function downloadAudio(text, trackSelect, voiceSelect) {
             $.ajax({
                 url: "http://localhost:3239/downloadAudio",
                 type: "POST",
-                data: { text: text, folderPath: folderPath, trackSelect: trackSelect, voiceSelect: voiceSelect },
+                data: { text: text, trackSelect: trackSelect, voiceSelect: voiceSelect },
                 timeout: 10000, // 设置超时为10秒
                 success: function(response) {
                     console.log("downloadAudio response: " + response);

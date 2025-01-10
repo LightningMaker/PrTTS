@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ExtensionList>
-    <Extension Id="com.dnv.HarnessPanel">
+    <Extension Id="live.lightningmaker.PrTTS">
         <HostList>
             <Host Name="PPRO" Port="4040"/>
         </HostList>

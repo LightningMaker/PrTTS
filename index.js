@@ -44,11 +44,25 @@ function run(){
 
 	app.post("/downloadAudio", async (req, res, next) => {
 		try {
+			var csInterface = new CSInterface();
+
+			// 改为从服务器获取项目路径
+			var folderPath = "";
+			csInterface.evalScript('$._ext.getProjectPath()', function(result) {
+				console.log("projPath:" + result);
+				let projPath = result;
+				// 提取文件夹路径
+				folderPath = projPath.substring(0, projPath.lastIndexOf("\\"));
+				console.log("folderPath: " + folderPath);
+			});
+
+
+
+
 			console.log("Received request for /downloadAudio");
 	
 			// 从 POST 表单中获取参数
 			const text = req.body.text;
-			const folderPath = req.body.folderPath;
 			const trackSelect = req.body.trackSelect;
 			const voiceSelect = req.body.voiceSelect;
 	
