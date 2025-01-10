@@ -1,0 +1,147 @@
+<!doctype html>
+<!--
+/*************************************************************************
+* ADOBE CONFIDENTIAL
+* ___________________
+*
+* Copyright 2014 Adobe
+* All Rights Reserved.
+*
+* NOTICE: Adobe permits you to use, modify, and distribute this file in
+* accordance with the terms of the Adobe license agreement accompanying
+* it. If you have received this file from a source other than Adobe,
+* then your use, modification, or distribution of it requires the prior
+* written permission of Adobe. 
+**************************************************************************/
+-->
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<script src="./ext.js"></script>
+	<script src="./lib/CSInterface.js"></script>
+	<script src="./lib/jquery-1.9.1.js"></script>
+    <script src="./lib/Vulcan.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="./index.js"></script>
+
+	<link id="ppstyle" href="css/index.css" rel="stylesheet" type="text/css">
+	<link id="ppstyle" href="css/style.css" rel="stylesheet" type="text/css">
+	<script type="text/javascript">
+		$(document).ready(function () {
+
+            // Start the Express Host
+            run();
+
+			//设置主题
+
+
+		});
+
+
+		
+	</script>
+</head>
+
+<body onLoad="onLoaded()">
+    <div class="container">
+		<div class="top-bar">
+			<!--<button style="float: right;" class="controlBg textStyle inline" onclick="history.go(0)">刷新面板</button>
+			<button class="controlBg textStyle" onclick="importTest()">导入测试</button>-->
+			<button class="controlBg textStyle inline" onclick="ClearText()">清空文字</button>
+			<!--select ，用于选择音轨-->
+			<label for="trackSelect" class="textStyle inline">选择音轨:</label>
+			<select id="trackSelect" class="controlBg textStyle inline">
+				<option value="0">A1</option>
+				<option value="1">A2</option>
+				<option value="2">A3</option>
+			</select>
+
+
+			<button style="float: right;" class="controlBg textStyle inline" onclick="OpenWebDebugging()">Web调试</button>
+
+		</div>
+
+		
+        <textarea id="inputText" class="text-area" placeholder="输入文字..."></textarea>
+        <button id="testApiButton" class="confirm-button">合成音频</button>
+    </div>
+
+	<!--居中显示的提示框，默认隐藏-->
+	<div id="alertBox" class="alertBox">
+		<div class="alertContent">
+			<div class="alertText">合成音频成功</div>
+		</div>
+	</div>
+	<script>
+		var csInterface = new CSInterface();
+		var folderPath = ""
+		csInterface.evalScript('$._ext.getProjectPath()', function(result) {
+			console.log("projPath:" + result);
+			let projPath = result;
+			// 提取文件夹路径
+			folderPath = projPath.substring(0, projPath.lastIndexOf("\\"));
+			console.log("folderPath: " + folderPath);
+		});
+
+
+		//console.log(path);
+
+		var textarea = document.getElementById('inputText');
+		document.getElementById('testApiButton').addEventListener('click', function () {
+			//调用下载音频文件localhost api
+			let text = textarea.value;
+			let trackSelect = document.getElementById('trackSelect').value;
+			downloadAudio(text, folderPath, trackSelect);     
+			
+        });
+
+		async function downloadAudio(text, folderPath, trackSelect) {
+            $.ajax({
+                url: "http://localhost:3239/downloadAudio",
+                type: "POST",
+                data: { text: text, folderPath: folderPath, trackSelect: trackSelect },
+                timeout: 10000, // 设置超时为10秒
+                success: function(response) {
+                    console.log("downloadAudio response: " + response);
+                    showAlert(response);
+                },
+                error: function() {
+                    console.error("请求失败");
+                    showAlert("合成音频失败，请尝试关闭插件面板后重新打开");
+                }
+            });
+        }
+
+
+		function importTest() {
+			let filePath = "C:\\Users\\Admin\\Desktop\\pr测试\\TTS Audio\\hihi1736454963048.mp3";
+			filePath = filePath.replace(/\\/g, "/");
+			csInterface.evalScript('$._ext.importSingleFile("' + filePath + '")', function(result) {
+				console.log("importTest result: " + result);
+			});
+		}
+
+		function ClearText() {
+			textarea.value = "";
+		}
+
+		function OpenWebDebugging() {
+			csInterface.openURLInDefaultBrowser("http://localhost:4040");
+		}
+
+		function showAlert(message) {
+            const alertBox = document.getElementById("alertBox");
+            alertBox.querySelector(".alertText").textContent = message;
+            alertBox.style.display = "block";
+            alertBox.style.opacity = "1"; // 确保显示时透明度为1
+            setTimeout(() => {
+                alertBox.style.opacity = "0"; // 逐渐消失
+                setTimeout(() => {
+                    alertBox.style.display = "none"; // 完全消失后隐藏
+                }, 1000); // 与 transition 时间一致
+            }, 2000); // 2秒后开始消失
+        }
+	</script>
+</body>
+</html>
