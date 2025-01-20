@@ -6,6 +6,7 @@ html, body {
 	height: 100%;
 	overflow: hidden;
 	font-family: Arial, sans-serif;
+	user-select: none; /* 禁止选中文本 */
 }
 
 .container {
@@ -21,19 +22,25 @@ html, body {
 	width: 100%;
 	height: 30px;
 	top: 0px;
-	line-height: 25px;
-    vertical-align: middle;
+	line-height: 30px;
+	padding-top: 5px;
+	align-items: center;
+    vertical-align:middle;
 	padding-left: 10px;
 	padding-right: 10px;
 	box-sizing: border-box;
+	display: flex;
+	flex-direction: row;
+	gap: 5px; /* 设置元素之间的间距 */
 }
 
 
 /* 按钮和下拉框样式 */
 .debug-button {
-    position: absolute;
-    top: 2px;
+    position: fixed;
+    top: 5px;
     right: 10px;
+	z-index: 1000;
 }
 
 .trackSelect{
@@ -67,6 +74,7 @@ option{
 	overflow-y: auto;
 
 	margin-top: 5px;
+	user-select: text; /* 允许选中文本 */
 }
 
 .confirm-button {
@@ -105,6 +113,7 @@ a {
 .textStyle {
 	font-size: 12px;
 	color: #ffffff;
+	
 }
 
 

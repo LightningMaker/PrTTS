@@ -68,6 +68,7 @@
 			<select id="voiceSelect" class="trackSelect controlBg textStyle inline" style="width: 140px;">
 				<option value="1504">加载中...</option>
 			</select>
+			<button class="controlBg textStyle inline" onclick="insertPause()">插入停顿</button>
 		</div>
 		
         <textarea id="inputText" class="text-area" placeholder="输入文字..."></textarea>
@@ -198,6 +199,11 @@
                 }, 1000); // 与 transition 时间一致
             }, 2000); // 2秒后开始消失
         }
+
+		function insertPause() {
+			var textarea = document.getElementById('inputText');
+			textarea.value += "((⏱️=500))";
+		}
 	</script>
 </body>
 </html>

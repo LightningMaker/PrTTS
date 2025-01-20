@@ -84,6 +84,16 @@ function run(){
 	
 			const audio_file_url = response.data.audio_file_url;
 			console.log('audio_file_url:', audio_file_url);
+
+			if(!audio_file_url){
+				error_code = response.data.error_code;
+				if(error_code == "TOTAL_TOKEN_CHARACTERS_EXCEED_LIMIT"){
+					res.status(200).send("音频下载遇到错误: 本周Token余额已用完");
+				}else{
+					res.status(200).send("音频下载遇到错误: " + response.data.error_code);
+				}
+				return;
+			}
 	
 			const childFolderPath = path.resolve(folderPath, 'TTS Audio');
 			if (!fs.existsSync(childFolderPath)) {
