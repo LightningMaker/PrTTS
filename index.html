@@ -49,29 +49,71 @@
 		<div class="top-bar">
 			<!--<button style="float: right;" class="controlBg textStyle inline" onclick="history.go(0)">刷新面板</button>
 			<button class="controlBg textStyle" onclick="importTest()">导入测试</button>-->
-			<button class="controlBg textStyle inline" onclick="ClearText()">清空文字</button>
+			
 			<!--select ，用于选择音轨-->
-			<label for="trackSelect" class="textStyle inline">选择音轨:</label>
+			<label for="trackSelect" class="textStyle inline">插入音轨:</label>
 			<select id="trackSelect" class="trackSelect controlBg textStyle inline">
 				<option value="0">A1</option>
 				<option value="1">A2</option>
 				<option value="2">A3</option>
 			</select>
-			
 
-			<button class="controlBg textStyle inline debug-button" onclick="OpenWebDebugging()">Web调试</button>
+			<!--select ，用于选择语音合成平台-->
+			<label for="platformSelect" class="textStyle inline">选择平台:</label>
+			<select id="platformSelect" class="trackSelect controlBg textStyle inline">
+				<option value="azure">Azure</option>
+				<option value="ttsmaker">TTSMaker</option>
+			</select>		
+
+			<button class="controlBg textStyle inline debug-button" onclick="ClearText()">清空文字</button>
+			<!--<button class="controlBg textStyle inline debug-button" onclick="OpenWebDebugging()">Web调试</button>-->
 		</div>
 
-		<!--第二行菜单-->
-		<div class="top-bar">
-			<label for="voiceSelect" class="textStyle inline">选择声音:</label>
-			<select id="voiceSelect" class="trackSelect controlBg textStyle inline" style="width: 140px;">
+		<!--第二行菜单 使用Azure语音-->
+		<div class="top-bar" id="voiceBarAzure" style="display: block;">
+			<label for="voiceSelectAzure" class="textStyle inline">选择声音:</label>
+			<select id="voiceSelectAzure" class="trackSelect controlBg textStyle inline" style="width: 140px;">
+				<option value="zh-CN-XiaoxiaoNeural">晓晓（女）</option>
+				<option value="zh-CN-YunxiNeural">云希（男）</option>
+				<option value="zh-CN-YunjianNeural">云健（男）</option>
+				<option value="zh-CN-XiaoyiNeural">晓怡（女）</option>
+				<option value="zh-CN-YunyangNeural">云扬（男）</option>
+				<option value="zh-CN-XiaochenNeural">晓晨（女）</option>
+				<option value="zh-CN-XiaochenMultilingualNeural">晓晨多语言（女）</option>
+				<option value="zh-CN-XiaohanNeural">晓涵（女）</option>
+				<option value="zh-CN-XiaomengNeural">晓梦（女）</option>
+				<option value="zh-CN-XiaomoNeural">晓墨（女）</option>
+				<option value="zh-CN-XiaoqiuNeural">晓秋（女）</option>
+				<option value="zh-CN-XiaorouNeural">晓柔（女）</option>
+				<option value="zh-CN-XiaoruiNeural">晓睿（女）</option>
+				<option value="zh-CN-XiaoshuangNeural">晓霜（女性、儿童）</option>
+				<option value="zh-CN-XiaoxiaoMultilingualNeural">晓晓多语言（女）</option>
+				<option value="zh-CN-XiaoyanNeural">晓燕（女）</option>
+				<option value="zh-CN-XiaoyouNeural">晓悠（女性、儿童）</option>
+				<option value="zh-CN-XiaoyuMultilingualNeural">晓雨多语言（女）</option>
+				<option value="zh-CN-XiaozhenNeural">晓珍（女）</option>
+				<option value="zh-CN-YunfengNeural">云峰（男）</option>
+				<option value="zh-CN-YunhaoNeural">云浩（男）</option>
+				<option value="zh-CN-YunjieNeural">云杰（男）</option>
+				<option value="zh-CN-YunxiaNeural">云夏（男）</option>
+				<option value="zh-CN-YunyeNeural">云烨（男）</option>
+				<option value="zh-CN-YunyiMultilingualNeural">云逸多语言（男）</option>
+				<option value="zh-CN-YunzeNeural">云泽（男）</option>
+				<option value="zh-CN-YunfanMultilingualNeural">云帆多语言（男）</option>
+				<option value="zh-CN-YunxiaoMultilingualNeural">云霄多语言（男）</option>
+			</select>
+		</div>
+
+		<!--第三行菜单 使用TTSMaker-->
+		<div class="top-bar" id="voiceBarTTSMaker" style="display: none;">
+			<label for="voiceSelectTTSMaker" class="textStyle inline">选择声音:</label>
+			<select id="voiceSelectTTSMaker" class="trackSelect controlBg textStyle inline" style="width: 140px;">
 				<option value="1504">加载中...</option>
 			</select>
 			<button class="controlBg textStyle inline" onclick="insertPause()">插入停顿</button>
 		</div>
 		
-        <textarea id="inputText" class="text-area" placeholder="输入文字..."></textarea>
+        <textarea id="inputText" class="text-area" placeholder="输入文字..." maxlength="300"></textarea>
         <button id="testApiButton" class="confirm-button">合成音频</button>
     </div>
 
@@ -84,17 +126,32 @@
 	<script>
 		var csInterface = new CSInterface();
 
+		//监听platformSelect的变化，根据选择的平台显示对应的voiceBar
+		document.getElementById("platformSelect").addEventListener("change", function() {
+			var platformSelect = document.getElementById("platformSelect").value;
+			if (platformSelect === "azure") {
+				document.getElementById("voiceBarAzure").style.display = "block";
+				document.getElementById("voiceBarTTSMaker").style.display = "none";
+			} else if (platformSelect === "ttsmaker") {
+				document.getElementById("voiceBarAzure").style.display = "none";
+				document.getElementById("voiceBarTTSMaker").style.display = "block";
+			}
+		});
+
+
 		// 获取voice列表并填充到select元素中
-		function loadVoices() {
+		function loadTTSMakerVoices() {
         var token = "ttsmaker_demo_token"; // 替换为你的token
         var url = `https://api.ttsmaker.cn/v1/get-voice-list?token=${token}`;
 
+		//获取TTSMaker的声音列表
         fetch(url)
             .then(response => response.json())
             .then(data => {
                 if (data.status === "success") {
-                    var voiceSelect = document.getElementById("voiceSelect");
-                    voiceSelect.innerHTML = ""; // 清空现有选项
+					//根据选择的平台选择
+                    var voiceSelectTTSMaker = document.getElementById("voiceSelectTTSMaker");
+                    voiceSelectTTSMaker.innerHTML = ""; // 清空之前的选项
 
                     // 对voices_detailed_list进行排序，将language为"zh"的选项排在最前
                     data.voices_detailed_list.sort((a, b) => {
@@ -111,14 +168,13 @@
                         var option = document.createElement("option");
                         option.value = voice.id;
                         option.text = voice.name;
-                        voiceSelect.appendChild(option);
+                        voiceSelectTTSMaker.appendChild(option);
 
                     });
 
 					//如果有1504的声音，设置默认值为1504
-					var voiceSelect = document.getElementById("voiceSelect");
-					if (voiceSelect.querySelector("option[value='1504']")) {
-						voiceSelect.value = "1504";
+					if (voiceSelectTTSMaker.querySelector("option[value='1504']")) {
+						voiceSelectTTSMaker.value = "1504";
 					}
                 } else {
                     console.error("Failed to load voices:", data.error_details);
@@ -133,7 +189,7 @@
 		// 在页面加载完成后调用loadVoices函数
 		window.onload = function() {
 			onLoaded();
-			loadVoices();
+			loadTTSMakerVoices();
 
 			// 设置trackSelect的默认值为1
 			var trackSelect = document.getElementById("trackSelect");
@@ -147,17 +203,23 @@
 			//调用下载音频文件localhost api
 			let text = textarea.value;
 			let trackSelect = document.getElementById('trackSelect').value;
-			let voiceSelect = document.getElementById('voiceSelect').value;
+
+			//根据选择的平台选择对应的voiceSelect
+			let platformSelect = document.getElementById("platformSelect").value;
+			let voiceSelect = document.getElementById("voiceSelectTTSMaker").value;
+			if (platformSelect === "azure") {
+				voiceSelect = document.getElementById("voiceSelectAzure").value;
+			}
 			
-			downloadAudio(text, trackSelect, voiceSelect);     
+			downloadAudio(text, trackSelect, voiceSelect, platformSelect);     
 			
         });
 
-		async function downloadAudio(text, trackSelect, voiceSelect) {
+		async function downloadAudio(text, trackSelect, voiceSelect, platformSelect) {
             $.ajax({
                 url: "http://localhost:3239/downloadAudio",
                 type: "POST",
-                data: { text: text, trackSelect: trackSelect, voiceSelect: voiceSelect },
+                data: { text: text, trackSelect: trackSelect, voiceSelect: voiceSelect , platformSelect: platformSelect},
                 timeout: 10000, // 设置超时为10秒
                 success: function(response) {
                     console.log("downloadAudio response: " + response);
@@ -165,7 +227,7 @@
                 },
                 error: function() {
                     console.error("请求失败");
-                    showAlert("合成音频失败，请尝试关闭插件面板后重新打开");
+                    showAlert("响应超时，请尝试关闭插件面板后重新打开");
                 }
             });
         }
@@ -188,17 +250,36 @@
 		}
 
 		function showAlert(message) {
-            const alertBox = document.getElementById("alertBox");
-            alertBox.querySelector(".alertText").textContent = message;
-            alertBox.style.display = "block";
-            alertBox.style.opacity = "1"; // 确保显示时透明度为1
-            setTimeout(() => {
-                alertBox.style.opacity = "0"; // 逐渐消失
-                setTimeout(() => {
-                    alertBox.style.display = "none"; // 完全消失后隐藏
-                }, 1000); // 与 transition 时间一致
-            }, 2000); // 2秒后开始消失
-        }
+			const alertBox = document.getElementById("alertBox");
+			const alertText = alertBox.querySelector(".alertText");
+
+			// 清除任何现有的超时
+			if (alertBox.timeoutId) {
+				clearTimeout(alertBox.timeoutId);
+			}
+
+			// 立即隐藏当前的提示框
+			alertBox.style.display = "none";
+			alertBox.style.opacity = "0";
+
+			// 设置新的提示框内容和显示
+			alertText.textContent = message;
+			alertBox.style.display = "block";
+			setTimeout(() => {
+				alertBox.style.opacity = "1"; // 确保显示时透明度为1
+			}, 10); // 确保 display 属性生效后再设置透明度
+
+			// 设置新的超时
+			alertBox.timeoutId = setTimeout(() => {
+				alertBox.style.opacity = "0"; // 逐渐消失
+				setTimeout(() => {
+					// 仅在透明度过渡完成后隐藏
+					if (alertBox.style.opacity === "0") {
+						alertBox.style.display = "none";
+					}
+				}, 1000); // 与 transition 时间一致
+			}, 2000); // 2秒后开始消失
+		}
 
 		function insertPause() {
 			var textarea = document.getElementById('inputText');

@@ -13,9 +13,10 @@
         {
             "type": "extendscript-debug",
             "request": "launch",
-            "name": "Run current file",
+            "name": "Extendscript-debug",
             "program": "${file}",
             "stopOnEntry": false
         }
+
     ]
 }

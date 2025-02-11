@@ -60,7 +60,7 @@ option{
 /* 文本区域样式 */
 .text-area {
 	width: 100%;
-	height: calc(100% - 115px); /* 自动计算剩余空间，高度不超过面板高度减去顶部和底部按钮的空间 */
+	height: calc(100% - 125px); /* 自动计算剩余空间，高度不超过面板高度减去顶部和底部按钮的空间 */
 	padding: 10px;
 	font-size: 16px;
 	border: 1px solid #ccc;
@@ -73,7 +73,7 @@ option{
 	word-wrap: break-word; /* 确保长单词或 URL 换行 */
 	overflow-y: auto;
 
-	margin-top: 5px;
+	margin-top: 15px;
 	user-select: text; /* 允许选中文本 */
 }
 
