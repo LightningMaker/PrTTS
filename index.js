@@ -44,22 +44,25 @@ function run(){
 
 	app.post("/downloadAudio", async (req, res, next) => {
 		try {
+			console.log("Received request for /downloadAudio");
+
 			var csInterface = new CSInterface();
 
 			// 改为从服务器获取项目路径
-			var folderPath = "";
-			csInterface.evalScript('$._ext.getProjectPath()', function(result) {
-				console.log("projPath:" + result);
-				let projPath = result;
-				// 提取文件夹路径
-				folderPath = projPath.substring(0, projPath.lastIndexOf("\\"));
-				console.log("folderPath: " + folderPath);
+			const folderPath = await new Promise((resolve, reject) => {
+				csInterface.evalScript('$._ext.getProjectPath()', function(result) {
+					if (result) {
+						console.log("projPath:" + result);
+						let projPath = result;
+						// 提取文件夹路径
+						const folderPath = projPath.substring(0, projPath.lastIndexOf("\\"));
+						console.log("folderPath: " + folderPath);
+						resolve(folderPath);
+					} else {
+						reject("Failed to get project path");
+					}
+				});
 			});
-
-
-
-
-			console.log("Received request for /downloadAudio");
 	
 			// 从 POST 表单中获取参数
 			const text = req.body.text;
@@ -133,6 +136,7 @@ function run(){
 
 
 			}else if(platformSelect == "azure"){
+
 				const childFolderPath = path.resolve(folderPath, 'TTS Audio');
 				if (!fs.existsSync(childFolderPath)) {
 					console.log("Creating directory:", childFolderPath);
@@ -182,6 +186,7 @@ function run(){
 						} else {
 							console.log("Unexpected synthesis result: " + result);
 							res.status(200).send("音频下载遇到错误: " + result);
+
 						}
 					},
 					function (err) {
